@@ -7,7 +7,7 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
     const abortController = new AbortController();
     const timeout = setTimeout(() => abortController.abort(), options?.timeout ?? 5000);
 
-    const getReturnValue = (isImage = false, imageURL = '') => ({ isImage, imageURL });
+    const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
 
     try {
         const response = await fetch(url, { signal: abortController.signal });
@@ -25,12 +25,12 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
 
                 return getReturnValue(true, meta.content);
             }
-        } else return getReturnValue(true, url);
+        } else return getReturnValue(true);
     } catch (err) {
         if (err.name !== 'AbortError') console.error(err);
 
         clearTimeout(timeout);
     }
 
-    return getReturnValue();
+    return getReturnValue(false);
 };
