@@ -10,7 +10,11 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
 
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
 
-    if (!isURL(url)) return getReturnValue();
+    if (!isURL(url)) {
+        clearTimeout(timeout);
+
+        return getReturnValue();
+    }
 
     try {
         const response = await fetch(url, { signal: abortController.signal });
@@ -35,5 +39,5 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
         clearTimeout(timeout);
     }
 
-    return getReturnValue(false);
+    return getReturnValue();
 };
