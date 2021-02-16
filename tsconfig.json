@@ -12,6 +12,7 @@
         "strictFunctionTypes": true,
         "alwaysStrict": true,
         "declaration": true,
+        "esModuleInterop": true,
 
         "noUnusedLocals": true,
         "noUnusedParameters": true,

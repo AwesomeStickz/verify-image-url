@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom';
 import AbortController from 'abort-controller';
 import fetch from 'node-fetch';
+import isURL from 'is-url';
 import getImageType from 'image-type';
 
 export const verifyImageURL = async (url: string, options?: { timeout: number }) => {
@@ -8,6 +9,8 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
     const timeout = setTimeout(() => abortController.abort(), options?.timeout ?? 5000);
 
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
+
+    if (!isURL(url)) return getReturnValue();
 
     try {
         const response = await fetch(url, { signal: abortController.signal });

@@ -28,10 +28,12 @@
     "dependencies": {
         "abort-controller": "^3.0.0",
         "image-type": "^4.1.0",
+        "is-url": "^1.2.4",
         "jsdom": "^16.4.0",
         "node-fetch": "^2.6.1"
     },
     "devDependencies": {
+        "@types/is-url": "^1.2.28",
         "@types/jsdom": "^16.2.6",
         "@types/node-fetch": "^2.5.8"
     }
