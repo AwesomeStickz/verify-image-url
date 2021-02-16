@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "module": "commonjs",
+        "lib": ["es2019"],
+        "allowJs": true,
+        "outDir": "dist",
+
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "alwaysStrict": true,
+        "declaration": true,
+
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+
+        "pretty": true,
+
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}
