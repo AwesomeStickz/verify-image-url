@@ -18,13 +18,13 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
 
     try {
         const response = await fetch(url, { signal: abortController.signal });
-        const buffer = Buffer.from(await response.clone().arrayBuffer());
+        const buffer = Buffer.from(await response.arrayBuffer());
         const imageType = getImageType(buffer);
 
         clearTimeout(timeout);
 
         if (!imageType?.mime.startsWith('image')) {
-            const responseText = await response.text();
+            const responseText = await (await fetch(url, { signal: abortController.signal })).text();
 
             if (responseText.includes('og:image')) {
                 const dom = new JSDOM(responseText);
