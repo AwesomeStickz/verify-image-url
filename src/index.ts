@@ -8,18 +8,18 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
     if (!isURL(url)) return getReturnValue();
 
-    const { abort, signal } = new AbortController();
-    const timeout = setTimeout(() => abort(), options?.timeout ?? 5000);
+    const abortController = new AbortController();
+    const timeout = setTimeout(() => abortController.abort(), options?.timeout ?? 5000);
 
     try {
-        const response = await fetch(url, { signal });
+        const response = await fetch(url, { signal: abortController.signal });
         const buffer = Buffer.from(await response.arrayBuffer());
         const imageType = getImageType(buffer);
 
         clearTimeout(timeout);
 
         if (!imageType?.mime.startsWith('image')) {
-            const responseText = await (await fetch(url, { signal })).text();
+            const responseText = await (await fetch(url, { signal: abortController.signal })).text();
 
             if (responseText.includes('og:image')) {
                 const dom = new JSDOM(responseText);
