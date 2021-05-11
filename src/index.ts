@@ -25,6 +25,9 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
                 const dom = new JSDOM(responseText);
                 const meta = dom.window.document.querySelector('meta[property="og:image"]');
 
+                if (!isURL(meta.content)) return getReturnValue();
+                if (!meta.content.startsWith('http:')) meta.content = `http:${meta.content}`;
+
                 return getReturnValue(true, meta.content);
             }
         } else return getReturnValue(true);
