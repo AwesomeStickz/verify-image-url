@@ -8,7 +8,7 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
     if (!isURL(url)) return getReturnValue();
 
     try {
-        const responseBuffer = (await got(url, { timeout: options?.timeout ?? 5000 })).rawBody;
+        const responseBuffer = (await got(url, { headers: { 'User-Agent': 'got' }, timeout: options?.timeout ?? 5000 })).rawBody;
         const imageType = getImageType(responseBuffer);
 
         if (!imageType?.mime.startsWith('image')) {
