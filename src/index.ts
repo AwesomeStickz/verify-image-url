@@ -28,7 +28,7 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
             }
         } else return getReturnValue(true);
     } catch (err) {
-        if (err.code !== 'ETIMEDOUT') console.error(err);
+        if (err.code !== 'ETIMEDOUT' && err.code !== 'ENOTFOUND' && err.message !== 'Response code 404 (Not Found)') console.error(err);
     }
 
     return getReturnValue();
