@@ -2,8 +2,8 @@
     "name": "verify-image-url",
     "version": "1.2.3",
     "description": "A package to check if a URL is an image URL or not and also get the valid image link from it",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "index.js",
+    "types": "index.d.ts",
     "scripts": {
         "build": "tsc",
         "prepare": "npm run build"
