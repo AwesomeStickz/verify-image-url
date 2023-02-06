@@ -28,6 +28,7 @@
     "dependencies": {
         "got": "^11.8.2",
         "image-type": "^4.1.0",
+        "is-svg": "^4.3.2",
         "is-url": "^1.2.4",
         "jsdom": "^16.4.0"
     },

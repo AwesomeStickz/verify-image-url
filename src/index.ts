@@ -2,8 +2,9 @@ import { JSDOM } from 'jsdom';
 import isURL from 'is-url';
 import getImageType from 'image-type';
 import got from 'got';
+import isSvg from 'is-svg';
 
-export const verifyImageURL = async (url: string, options?: { timeout: number }) => {
+export const verifyImageURL = async (url: string, options?: { timeout?: number; allowSVG?: boolean }) => {
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
     if (!isURL(url)) return getReturnValue();
 
@@ -25,7 +26,7 @@ export const verifyImageURL = async (url: string, options?: { timeout: number })
                 }
 
                 return getReturnValue(true, meta.content);
-            }
+            } else if (options?.allowSVG && isSvg(responseBuffer)) return getReturnValue(true);
         } else return getReturnValue(true);
     } catch (err: any) {
         if (err.code !== 'ETIMEDOUT' && err.code !== 'ENOTFOUND' && err.message !== 'Response code 404 (Not Found)') console.error(err);
