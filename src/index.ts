@@ -14,9 +14,9 @@ export const verifyImageURL = async (url: string, options?: { timeout?: number; 
         const imageType = getImageType(responseBuffer);
 
         if (!imageType?.mime.startsWith('image')) {
-            if (responseBuffer.includes('og:image')) {
+            if (responseBuffer.includes('og:image') || responseBuffer.includes('itemprop="image"')) {
                 const dom = new JSDOM(responseBuffer);
-                const meta = dom.window.document.querySelector('meta[property="og:image"]');
+                const meta = dom.window.document.querySelector('meta[property="og:image"]') || dom.window.document.querySelector('meta[itemprop="image"]');
 
                 if (!meta?.content) return getReturnValue();
 
