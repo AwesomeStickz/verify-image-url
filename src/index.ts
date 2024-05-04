@@ -1,8 +1,9 @@
-import { JSDOM } from 'jsdom';
-import isURL from 'is-url';
-import getImageType from 'image-type';
 import got from 'got';
+import getImageType from 'image-type';
 import isSvg from 'is-svg';
+import isURL from 'is-url';
+import { JSDOM } from 'jsdom';
+import { URL } from 'url';
 
 export const verifyImageURL = async (url: string, options?: { timeout?: number; allowSVG?: boolean }) => {
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
@@ -17,7 +18,11 @@ export const verifyImageURL = async (url: string, options?: { timeout?: number; 
                 const dom = new JSDOM(responseBuffer);
                 const meta = dom.window.document.querySelector('meta[property="og:image"]');
 
-                if (!meta || !meta.content || !isURL(meta.content)) return getReturnValue();
+                if (!meta?.content) return getReturnValue();
+
+                if (meta.content[0] === '/' && meta.content[1] !== '/') meta.content = `${new URL(url).origin}${meta.content}`;
+
+                if (!isURL(meta.content)) return getReturnValue();
 
                 if (!/^https?:/.test(meta.content)) {
                     if (/^\/\//.test(meta.content)) meta.content = `http:${meta.content}`;
