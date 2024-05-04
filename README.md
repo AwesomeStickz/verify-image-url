@@ -25,4 +25,8 @@ await verifyImageURL('https://prnt.sc/zrfn0r');
 // Also works with SVGs
 await verifyImageURL('https://example.com/example.svg', { allowSVG: true });
 // -> { isImage: true, imageURL: 'https://example.com/example.svg' }
+
+// You can also have it send to a proxy if you want
+await verifyImageURL('https://example.com/example.png', { proxy: { url: 'https://proxy.example.com', auth: 'super secret auth' } });
+// This sends a POST request to the provided proxy url with the JSON body `{ method: 'GET', url: 'url' }` that the proxy can use to send request and send back the response
 ```

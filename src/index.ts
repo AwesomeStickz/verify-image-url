@@ -5,12 +5,12 @@ import isURL from 'is-url';
 import { JSDOM } from 'jsdom';
 import { URL } from 'url';
 
-export const verifyImageURL = async (url: string, options?: { timeout?: number; allowSVG?: boolean }) => {
+export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean; proxy?: { url: string; auth: string }; timeout?: number }) => {
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
     if (!isURL(url)) return getReturnValue();
 
     try {
-        const responseBuffer = (await got(url, { headers: { 'User-Agent': 'got' }, timeout: options?.timeout ?? 5000 })).rawBody;
+        const responseBuffer = options?.proxy ? (await got(options.proxy.url, { headers: { 'User-Agent': 'got', Authorization: options?.proxy?.auth }, method: 'POST', timeout: 5000, json: { method: 'GET', url } })).rawBody : (await got(url, { headers: { 'User-Agent': 'got' }, timeout: options?.timeout ?? 5000 })).rawBody;
         const imageType = getImageType(responseBuffer);
 
         if (!imageType?.mime.startsWith('image')) {
