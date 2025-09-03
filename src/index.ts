@@ -1,16 +1,39 @@
-import got from 'got';
+import got, { OptionsOfTextResponseBody } from 'got';
 import getImageType from 'image-type';
 import isSvg from 'is-svg';
 import isURL from 'is-url';
 import { JSDOM } from 'jsdom';
 import { URL } from 'url';
 
-export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean; proxy?: { url: string; auth: string }; timeout?: number }) => {
+export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean; proxy?: { url: string; auth?: string }; timeout?: number }) => {
     const getReturnValue = (isImage = false, imageURL = url) => ({ isImage, imageURL });
     if (!isURL(url)) return getReturnValue();
 
     try {
-        const responseBuffer = options?.proxy ? (await got(options.proxy.url, { headers: { 'User-Agent': 'got', Authorization: options?.proxy?.auth }, method: 'POST', timeout: 5000, json: { method: 'GET', url } })).rawBody : (await got(url, { headers: { 'User-Agent': 'got' }, timeout: options?.timeout ?? 5000 })).rawBody;
+        let requestURL: string;
+
+        const requestOptions: OptionsOfTextResponseBody = {
+            headers: {
+                'User-Agent': 'got',
+            },
+            timeout: options?.timeout ?? 5000,
+        };
+
+        // If proxy auth is provided, send a POST request to the proxy url with the provided auth
+        if (options?.proxy?.auth) {
+            requestURL = options.proxy.url;
+
+            requestOptions.method = 'POST';
+            requestOptions.json = { method: 'GET', url };
+
+            requestOptions.headers!.Authorization = options.proxy.auth;
+        }
+        // Otherwise, if a proxy url is provided, use it
+        else if (options?.proxy?.url) requestURL = `${options.proxy.url}${encodeURIComponent(url)}`;
+        // Otherwise, send the request directly
+        else requestURL = url;
+
+        const responseBuffer = (await got(requestURL, requestOptions)).rawBody;
         const imageType = getImageType(responseBuffer);
 
         if (!imageType?.mime.startsWith('image')) {

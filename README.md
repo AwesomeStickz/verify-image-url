@@ -27,6 +27,10 @@ await verifyImageURL('https://example.com/example.svg', { allowSVG: true });
 // -> { isImage: true, imageURL: 'https://example.com/example.svg' }
 
 // You can also have it send to a proxy if you want
+await verifyImageURL('https://example.com/example.png', { proxy: { url: 'https://proxy.example.com?url=' } });
+// This sends a GET request to https://proxy.example.com?url=https://example.com/example.png
+
+// Or if you'd like to protect your proxy with an auth, you can provide an auth like this:
 await verifyImageURL('https://example.com/example.png', { proxy: { url: 'https://proxy.example.com', auth: 'super secret auth' } });
 // This sends a POST request to the provided proxy url with the JSON body `{ method: 'GET', url: 'url' }` that the proxy can use to send request and send back the response
 ```
