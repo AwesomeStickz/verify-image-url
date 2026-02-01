@@ -54,7 +54,7 @@ export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean
                 }
 
                 return getReturnValue(true, meta.content);
-            } else if (options?.allowSVG && isSvg(responseBuffer)) return getReturnValue(true);
+            } else if (options?.allowSVG && isSvg(responseBuffer.toString())) return getReturnValue(true);
         } else return getReturnValue(true);
     } catch (err: any) {
         if (err.code !== 'ETIMEDOUT' && err.code !== 'ENOTFOUND' && err.message !== 'Response code 404 (Not Found)') console.error(err);
