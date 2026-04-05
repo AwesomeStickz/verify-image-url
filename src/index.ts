@@ -1,8 +1,8 @@
+import * as cheerio from 'cheerio';
 import got, { OptionsOfTextResponseBody } from 'got';
 import getImageType from 'image-type';
 import isSvg from 'is-svg';
 import isURL from 'is-url';
-import { JSDOM } from 'jsdom';
 import { URL } from 'url';
 
 export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean; proxy?: { url: string; auth?: string }; timeout?: number }) => {
@@ -33,27 +33,29 @@ export const verifyImageURL = async (url: string, options?: { allowSVG?: boolean
         // Otherwise, send the request directly
         else requestURL = url;
 
-        const responseBuffer = (await got(requestURL, requestOptions)).rawBody;
+        const responseBuffer = (await got.default(requestURL, requestOptions)).rawBody;
         const imageType = getImageType(responseBuffer);
 
         if (!imageType?.mime.startsWith('image')) {
             if (responseBuffer.includes('og:image') || responseBuffer.includes('itemprop="image"')) {
-                const dom = new JSDOM(responseBuffer);
-                const meta = dom.window.document.querySelector('meta[property="og:image"]') || dom.window.document.querySelector('meta[itemprop="image"]');
+                const $ = cheerio.load(responseBuffer);
 
-                if (!meta?.content) return getReturnValue();
+                const meta = $('meta[property="og:image"]') || $('meta[itemprop="image"]');
+                let metaContent = meta?.attr('content');
 
-                if (meta.content[0] === '/' && meta.content[1] !== '/') meta.content = `${new URL(url).origin}${meta.content}`;
+                if (!metaContent) return getReturnValue();
 
-                if (!isURL(meta.content)) return getReturnValue();
+                if (metaContent[0] === '/' && metaContent[1] !== '/') metaContent = `${new URL(url).origin}${metaContent}`;
 
-                if (!/^https?:/.test(meta.content)) {
-                    if (/^\/\//.test(meta.content)) meta.content = `http:${meta.content}`;
-                    else if (/^\//.test(meta.content)) meta.content = `http:/${meta.content}`;
-                    else meta.content = `http://${meta.content}`;
+                if (!isURL(metaContent)) return getReturnValue();
+
+                if (!/^https?:/.test(metaContent)) {
+                    if (/^\/\//.test(metaContent)) metaContent = `http:${metaContent}`;
+                    else if (/^\//.test(metaContent)) metaContent = `http:/${metaContent}`;
+                    else metaContent = `http://${metaContent}`;
                 }
 
-                return getReturnValue(true, meta.content);
+                return getReturnValue(true, metaContent);
             } else if (options?.allowSVG && isSvg(responseBuffer.toString())) return getReturnValue(true);
         } else return getReturnValue(true);
     } catch (err: any) {
